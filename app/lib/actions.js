@@ -156,5 +156,14 @@ export const deleteProduct = async (formData) => {
 
 export const authenticate = async (prevState, formData) => {
   const { username, password } = Object.fromEntries(formData);
-  await signIn("credentials", { username, password });
+
+  try {
+    const res = await signIn("credentials", { username, password });
+    console.log("resssss", res);
+  } catch (error) {
+    if (error?.digest?.includes("NEXT_REDIRECT")) {
+      revalidatePath("/dashboard/users");
+      redirect("/dashboard/users");
+    } else return "Wrong Credentials!";
+  }
 };
